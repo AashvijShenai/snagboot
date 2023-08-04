@@ -28,6 +28,10 @@ import logging
 import ast
 
 def cli():
+	# Store relevant paths:
+	#	udev_path - contains rules to gain access to usb device
+	#	template_path - adds the template directory
+
 	udev_path = os.path.dirname(__file__) + "/50-snagboot.rules"
 	am335x_script_path = os.path.dirname(__file__) + "/am335x_usb_setup.sh"
 	template_path = os.path.dirname(__file__) + "/templates"
@@ -41,11 +45,27 @@ def cli():
 Templates:
 ''' + template_listing
 
+	# Parse arguments
+	#	Mandatory:
+	# 			soc_model
+	# 			firmware yaml file
+	# 			OR struct to firmware path - contains: binary name, path to binary and address
+	#	Optional:
+	# 			baudrate - UART baud rate, default:115200
+	#			loglevel - silent, info, debug. default: silent
+	#			logfile - default:board_recovery.log
+	#			rom-usb - vid:pid for when you have changed ROM code's USB
+	#			list-socs
+	#			version
+	#			udev - get required udev rules
+	
 	parser = argparse.ArgumentParser(epilog=example, formatter_class=argparse.RawDescriptionHelpFormatter)
+
 	mandatory = parser.add_argument_group("Mandatory")
 	mandatory.add_argument("-s", "--soc", help="soc model")
 	mandatory.add_argument("-f", "--firmware-file", help="firmware configurations, passed as a yaml file", metavar="\"templates/colibri-imx7d.yaml\"", action="append")
 	mandatory.add_argument("-F", "--firmware", help="firmware configurations, formatted as a python3 dict", metavar="\"{'fw1': {'path': '/path/to', 'address': 0x00}}\"", action="append", type=ast.literal_eval)
+
 	optional = parser.add_argument_group("Optional")
 	optional.add_argument("--uart", help="use UART for AM335x recovery", metavar="/dev/ttyx")
 	optional.add_argument("--baudrate", help="UART baudrate", default=115200)
