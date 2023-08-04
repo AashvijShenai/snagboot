@@ -14,9 +14,16 @@ def cli_error(error: str):
 	print(f"CLI error: {error}", file=sys.stderr)
 	sys.exit(-1)
 
-def get_usb(vid: int, pid: int):
-	dev = usb.core.find(idVendor=vid, idProduct=pid)
+def peek(iterable):
+	try:
+		first = next(iterable)
+	except StopIteration:
+		return None
+
+def get_usb(vid: int, pid: int, find_all_usb=False):
+	devices = usb.core.find(idVendor=vid, idProduct=pid, find_all=find_all_usb)
 	retry = 0
+	dev = peek(devices)
 	while dev is None:
 		time.sleep(USB_INTERVAL)
 		print(f"USB retry {retry}/{USB_RETRIES}")
@@ -28,7 +35,7 @@ def get_usb(vid: int, pid: int):
 		dev.get_active_configuration()
 	except usb.core.USBError:
 		access_error("USB", f"{vid:04x}:{pid:04x}")
-	return dev
+	return devices
 
 def parse_usb(usb_id: str) -> tuple:
 	expr = re.compile("([0-9a-fA-F]{1,4}):([0-9a-fA-F]{1,4})")

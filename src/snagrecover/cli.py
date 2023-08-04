@@ -53,6 +53,7 @@ Templates:
 	optional.add_argument("--loglevel", help="set loglevel", choices=["silent","info","debug"], default="silent")
 	optional.add_argument("--logfile", help="set logfile", default="board_recovery.log")
 	optional.add_argument("--rom-usb", help="USB ID used by ROM code", metavar="vid:pid")
+	optional.add_argument("--multiflash", help="if multiple boards need to be recovered true/false", default="false")
 	utilargs = parser.add_argument_group("Utilities")
 	utilargs.add_argument("--list-socs", help="list supported socs", action="store_true")
 	utilargs.add_argument("--version", help="show version", action="store_true")
